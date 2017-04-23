@@ -1,4 +1,5 @@
 #!/bin/bash
+#Based on Raspberry Pi temp program from 2016 (See legacy folder)
 function help {
 	echo
 	echo "Linux temperture program: "
@@ -23,11 +24,46 @@ function temp1 {
 	temp1=""$temp1_1"."$temp1_M"°C"
 }
 
-if [[ $1 = -h ]] || [[ $1 = --help ]]; then
+function temp2 {
+    temp2_raw=$(cat /sys/class/thermal/thermal_zone2/temp)
+    temp2_1=$(($temp2_raw / 1000))
+    temp2_2=$(($temp2_raw / 100))
+    temp2_M=$(($temp2_2 % $temp2_1))
+    temp2=""$temp2_1"."$temp2_M"°C"
+}
+
+function loop {
+	timer=$1
+	until [[ $timer -lt 1 ]]; do
+		temp0; temp1; temp2
+	    echo $temp0", "$temp1", "$temp2
+		sleep $2
+		let timer-=1
+	done
+	echo "loop has ended"
+}
+
+if [[ -z $1 ]]; then
+	echo "Usage ./temp.sh [[-b, --bare; -h, --help; -t, --temp [time] [quantity]]]"
+elif [[ $1 = -h ]] || [[ $1 = --help ]]; then
 	help
 elif [[ $1 = -b ]] || [[ $1 = --bare ]]; then
-	temp0; temp1
-	echo $temp0
-	echo $temp1
+	temp0; temp1; temp2
+	echo $temp0", "$temp1", "$temp2
+##Code which lies here is weird I will be glad if someone will fix this thanks :)
+elif [[ $1 = -l ]] || [[ $1 = --loop ]]; then
+	if [[ -z $2 ]]; then
+		loop 10 1
+	elif [[ -z $3 ]]; then
+		echo "You need to specify quantity (see --help) "
+	else
+		if [[ $(($2)) = $2 ]]; then
+			if [[ $(($3)) = $3 ]]; then
+				loop $2 $3
+			else
+				loop $2 10
+			fi
+		fi
+	fi
 fi
 

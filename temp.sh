@@ -3,8 +3,12 @@
 function help {
 	echo
 	echo "Linux temperture program: "
-	echo "no commands available today"
-	echo ""
+	echo "-h, --help display this help"
+	echo "-b, --bare measure temperture once."
+	echo "-l, --loop [quantity] [speed]"
+	echo "Example: "
+	echo "(./temp.sh --loop 250 10)"
+	echo "will measure 250 with 10 seconds between each measure"
 	exit
 }
 

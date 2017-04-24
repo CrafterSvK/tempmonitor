@@ -9,6 +9,7 @@ function help {
 	echo "Example: "
 	echo "(./temp.sh --loop 250 10)"
 	echo "will measure 250 with 10 seconds between each measure"
+	echo ""
 	exit
 }
 
